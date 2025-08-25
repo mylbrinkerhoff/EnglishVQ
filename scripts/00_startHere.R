@@ -13,31 +13,8 @@
 #   - Modify the script as needed for your specific dataset and analysis requirements.
 #----------------------------------------------------------------------------------------
 
-packages <- c(
-  "lme4",
-  "tidyverse",
-  "viridis",
-  "rsample",
-  "caret",
-  "rpart",
-  "ipred",
-  "here",
-  "reshape2",
-  "vip",
-  "randomForest",
-  "xtable",
-  "vegan",
-  "dbarts",
-  "plotrix",
-  "mgcv",
-  "itsadug",
-  "cowplot",
-  "plotly"
-)
-
-if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
-  install.packages(setdiff(packages, rownames(installed.packages())))
-}
+### install packages if not yet installed
+renv::restore()
 
 # Modeling process packages
 library(lme4) # for creating residual H1*
@@ -63,7 +40,7 @@ library(cowplot) # For creating complex plots
 library(plotly) # For creating interactive 3D-plots
 
 # Load in the raw vq data at data/raw/VoicesVQ_data.csv
-vq_raw <- read.csv(here::here("data/raw/", "VoicesVQ_data.csv"))
+vq_raw <- readr::read_csv(here::here("data/raw/", "VoicesVQ_data.csv"))
 
 # Create a variable for colorblind palette
 colorblind <- grDevices::palette.colors(palette = "Okabe-Ito")
