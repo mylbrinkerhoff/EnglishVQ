@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------------------
 # File: 00_startHere.R
-# Project: EnglishVQPerception
+# Project: EnglishVQ
 # Author: Mykel Brinkerhoff
 # Date: 2025-08-25 (M)
 # Description: This script loads in the the VoicesVQ_data.csv file and required packages

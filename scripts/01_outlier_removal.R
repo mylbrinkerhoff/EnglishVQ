@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------------------
 # File: 01_outlier_removal.R
-# Project: EnglishVQPerception
+# Project: EnglishVQ
 # Author: Mykel Brinkerhoff
 # Date: 2025-08-25 (M)
 # Description: Removes outliers based on f0, Formants, and Energy
@@ -78,13 +78,19 @@ vq_clean |>
 ## convert 0s to NA
 vq_clean$Energy_mean[vq_clean$Energy_mean == 0] <- NA
 
-## log10 transform energy and filter for na
+## log10 transform energy
 vq_clean <- vq_clean |>
-  dplyr::mutate(log_energy = log10(Energy_mean)) |>
-  dplyr::filter(!is.na(log_energy))
-
+  dplyr::mutate(log_energy = log10(Energy_mean))
 
 # remove f0, formant, and energy outliers
 vq_clean <- vq_clean |>
   dplyr::filter(f0_outlier == "OK") |>
-  dplyr::filter()
+  dplyr::filter(is.na(formant_outlier)) |>
+  dplyr::filter(!is.na(log_energy))
+
+# number of rows removed as outliers
+nrow(vq_raw) - nrow(vq_clean)
+
+# remove columns that where created
+vq_clean <- vq_clean |>
+  dplyr::select(-c(f0_outlier, formant_outlier, zF1F2, F0z))
