@@ -1,7 +1,7 @@
 library(lme4)
 
 # Calculates residuals of H1c after accounting for energyz and speaker effects
-calculate_residual_h1 <- function(
+calc_residH1 <- function(
   df,
   h1cz_col = "h1cz", # Column name for H1c values (default: "h1cz")
   energyz_col = "energyz", # Column name for energy values (default: "energyz")

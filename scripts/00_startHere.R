@@ -21,25 +21,20 @@ library(lme4) # for creating residual H1*
 library(rsample) # for resampling procedures
 library(caret) # for resampling and model training
 library(randomForest) # for tree generation
-library(rpart) # for fitting decision trees
-library(ipred) # for fitting bagged decision trees
 library(vip) # for feature interpretation
-library(dbarts) # for modeling with BART
-library(vegan) # For MDS analysis
-library(mgcv) # For GAM modeling
-library(itsadug) # For GAM modeling
+library(ranger) # for performing Random Forest CART analysis
 
 # Helper packages
 library(tidyverse) # for data manipulation, graphic, and data wrangling
 library(viridis) # for colorblind friendly colors in ggplot
 library(here) # for creating pathways relative to the top-level directory
 library(reshape2) # for data manipulation
+library(Cairo) # for saving the plots as .eps files
+library(cowplot) # For creating complex plots
+
 
 # Load in the raw vq data at data/raw/VoicesVQ_data.csv
 vq_raw <- readr::read_csv(here::here("data/raw/", "VoicesVQ_data.csv"))
 
 # Create a variable for colorblind palette
 colorblind <- grDevices::palette.colors(palette = "Okabe-Ito")
-
-# Adding function for calculating Mahalanobis distance
-source(here::here("scripts", "functions", "vmahalanobis.R"))

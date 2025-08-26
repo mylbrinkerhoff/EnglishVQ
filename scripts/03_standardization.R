@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------------------
-# File: 02_standardization.R
+# File: 03_standardization.R
 # Project: EnglishVQ
 # Author: Mykel Brinkerhoff
 # Date: 2025-08-25 (M)
@@ -7,7 +7,7 @@
 #              across speakers. SOE_mean transformed according to Garellek et al. (2020).
 #
 # Usage:
-#   Rscript 02_standardization.R
+#   Rscript 03_standardization.R
 #
 # Notes:
 #   - Ensure all required packages are installed.
@@ -20,7 +20,15 @@ vq_clean <- vq_clean |>
   dplyr::group_by(Talker) |>
   dplyr::mutate(
     dplyr::across(
-      .cols = -c(1:8),
+      .cols = -c(
+        Gender,
+        Vowel,
+        Word,
+        Filename,
+        Label,
+        seg_Start,
+        seg_End
+      ),
       .fns = ~ (. - mean(., na.rm = TRUE) / sd(., na.rm = TRUE)),
       .names = "{.col}_z"
     )

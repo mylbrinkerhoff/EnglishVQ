@@ -9,6 +9,34 @@
     ]
   },
   "Packages": {
+    "Cairo": {
+      "Package": "Cairo",
+      "Version": "1.6-5",
+      "Source": "Repository",
+      "Title": "R Graphics Device using Cairo Graphics Library for Creating High-Quality Bitmap (PNG, JPEG, TIFF), Vector (PDF, SVG, PostScript) and Display (X11 and Win32) Output",
+      "Author": "Simon Urbanek [aut, cre, cph] (https://urbanek.org, ORCID: <https://orcid.org/0000-0003-2297-1732>), Jeffrey Horner [aut]",
+      "Maintainer": "Simon Urbanek <Simon.Urbanek@r-project.org>",
+      "Authors@R": "c(person(\"Simon\", \"Urbanek\", role=c(\"aut\",\"cre\",\"cph\"), email=\"Simon.Urbanek@r-project.org\", comment=c(\"https://urbanek.org\", ORCID=\"0000-0003-2297-1732\")), person(\"Jeffrey\", \"Horner\", role=\"aut\", email=\"jeff.horner@vanderbilt.edu\"))",
+      "Depends": [
+        "R (>= 2.4.0)"
+      ],
+      "Imports": [
+        "grDevices",
+        "graphics"
+      ],
+      "Suggests": [
+        "png"
+      ],
+      "Enhances": [
+        "FastRWeb"
+      ],
+      "Description": "R graphics device using cairographics library that can be used to create high-quality vector (PDF, PostScript and SVG) and bitmap output (PNG,JPEG,TIFF), and high-quality rendering in displays (X11 and Win32). Since it uses the same back-end for all output, copying across formats is WYSIWYG. Files are created without the dependence on X11 or other external programs. This device supports alpha channel (semi-transparent drawing) and resulting images can contain transparent and semi-transparent regions. It is ideal for use in server environments (file output) and as a replacement for other devices that don't have Cairo's capabilities such as alpha support or anti-aliasing. Backends are modular such that any subset of backends is supported.",
+      "License": "GPL-2 | GPL-3",
+      "SystemRequirements": "cairo (>= 1.2 http://www.cairographics.org/)",
+      "URL": "http://www.rforge.net/Cairo/",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN"
+    },
     "DBI": {
       "Package": "DBI",
       "Version": "1.2.3",
@@ -1046,48 +1074,6 @@
       "Maintainer": "Davis Vaughan <davis@posit.co>",
       "Repository": "CRAN"
     },
-    "cluster": {
-      "Package": "cluster",
-      "Version": "2.1.8",
-      "Source": "Repository",
-      "VersionNote": "Last CRAN: 2.1.7 on 2024-12-06; 2.1.6 on 2023-11-30; 2.1.5 on 2023-11-27",
-      "Date": "2024-12-10",
-      "Priority": "recommended",
-      "Title": "\"Finding Groups in Data\": Cluster Analysis Extended Rousseeuw et al.",
-      "Description": "Methods for Cluster analysis.  Much extended the original from Peter Rousseeuw, Anja Struyf and Mia Hubert, based on Kaufman and Rousseeuw (1990) \"Finding Groups in Data\".",
-      "Maintainer": "Martin Maechler <maechler@stat.math.ethz.ch>",
-      "Authors@R": "c(person(\"Martin\",\"Maechler\", role = c(\"aut\",\"cre\"), email=\"maechler@stat.math.ethz.ch\", comment = c(ORCID = \"0000-0002-8685-9910\")) ,person(\"Peter\", \"Rousseeuw\", role=\"aut\", email=\"peter.rousseeuw@kuleuven.be\", comment = c(\"Fortran original\", ORCID = \"0000-0002-3807-5353\")) ,person(\"Anja\", \"Struyf\", role=\"aut\", comment= \"S original\") ,person(\"Mia\", \"Hubert\", role=\"aut\", email= \"Mia.Hubert@uia.ua.ac.be\", comment = c(\"S original\", ORCID = \"0000-0001-6398-4850\")) ,person(\"Kurt\", \"Hornik\", role=c(\"trl\", \"ctb\"), email=\"Kurt.Hornik@R-project.org\", comment=c(\"port to R; maintenance(1999-2000)\", ORCID=\"0000-0003-4198-9911\")) ,person(\"Matthias\", \"Studer\", role=\"ctb\") ,person(\"Pierre\", \"Roudier\", role=\"ctb\") ,person(\"Juan\",   \"Gonzalez\", role=\"ctb\") ,person(\"Kamil\",  \"Kozlowski\", role=\"ctb\") ,person(\"Erich\",  \"Schubert\", role=\"ctb\", comment = c(\"fastpam options for pam()\", ORCID = \"0000-0001-9143-4880\")) ,person(\"Keefe\",  \"Murphy\", role=\"ctb\", comment = \"volume.ellipsoid({d >= 3})\") #not yet ,person(\"Fischer-Rasmussen\", \"Kasper\", role = \"ctb\", comment = \"Gower distance for CLARA\") )",
-      "Depends": [
-        "R (>= 3.5.0)"
-      ],
-      "Imports": [
-        "graphics",
-        "grDevices",
-        "stats",
-        "utils"
-      ],
-      "Suggests": [
-        "MASS",
-        "Matrix"
-      ],
-      "SuggestsNote": "MASS: two examples using cov.rob() and mvrnorm(); Matrix tools for testing",
-      "Enhances": [
-        "mvoutlier",
-        "fpc",
-        "ellipse",
-        "sfsmisc"
-      ],
-      "EnhancesNote": "xref-ed in man/*.Rd",
-      "LazyLoad": "yes",
-      "LazyData": "yes",
-      "ByteCompile": "yes",
-      "BuildResaveData": "no",
-      "License": "GPL (>= 2)",
-      "URL": "https://svn.r-project.org/R-packages/trunk/cluster/",
-      "NeedsCompilation": "yes",
-      "Author": "Martin Maechler [aut, cre] (<https://orcid.org/0000-0002-8685-9910>), Peter Rousseeuw [aut] (Fortran original, <https://orcid.org/0000-0002-3807-5353>), Anja Struyf [aut] (S original), Mia Hubert [aut] (S original, <https://orcid.org/0000-0001-6398-4850>), Kurt Hornik [trl, ctb] (port to R; maintenance(1999-2000), <https://orcid.org/0000-0003-4198-9911>), Matthias Studer [ctb], Pierre Roudier [ctb], Juan Gonzalez [ctb], Kamil Kozlowski [ctb], Erich Schubert [ctb] (fastpam options for pam(), <https://orcid.org/0000-0001-9143-4880>), Keefe Murphy [ctb] (volume.ellipsoid({d >= 3}))",
-      "Repository": "CRAN"
-    },
     "codetools": {
       "Package": "codetools",
       "Version": "0.2-20",
@@ -1140,6 +1126,56 @@
       "NeedsCompilation": "no",
       "Author": "Hadley Wickham [aut, cre], RStudio [cph, fnd]",
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
+      "Repository": "CRAN"
+    },
+    "cowplot": {
+      "Package": "cowplot",
+      "Version": "1.2.0",
+      "Source": "Repository",
+      "Title": "Streamlined Plot Theme and Plot Annotations for 'ggplot2'",
+      "Authors@R": "person( given = \"Claus O.\", family = \"Wilke\", role = c(\"aut\", \"cre\"), email = \"wilke@austin.utexas.edu\", comment = c(ORCID = \"0000-0002-7470-9261\") )",
+      "Description": "Provides various features that help with creating publication-quality figures with 'ggplot2', such as a set of themes, functions to align plots and arrange them into complex compound figures, and functions that make it easy to annotate plots and or mix plots with images. The package was originally written for internal use in the Wilke lab, hence the name (Claus O. Wilke's plot package). It has also been used extensively in the book Fundamentals of Data Visualization.",
+      "URL": "https://wilkelab.org/cowplot/",
+      "BugReports": "https://github.com/wilkelab/cowplot/issues",
+      "Depends": [
+        "R (>= 3.5.0)"
+      ],
+      "Imports": [
+        "ggplot2 (>= 3.5.2)",
+        "grid",
+        "gtable",
+        "grDevices",
+        "methods",
+        "rlang",
+        "scales"
+      ],
+      "License": "GPL-2",
+      "Suggests": [
+        "Cairo",
+        "covr",
+        "dplyr",
+        "forcats",
+        "gridGraphics (>= 0.4-0)",
+        "knitr",
+        "lattice",
+        "magick",
+        "maps",
+        "PASWR",
+        "patchwork",
+        "rmarkdown",
+        "ragg",
+        "testthat (>= 1.0.0)",
+        "tidyr",
+        "vdiffr (>= 0.3.0)",
+        "VennDiagram"
+      ],
+      "VignetteBuilder": "knitr",
+      "Collate": "'add_sub.R' 'align_plots.R' 'as_grob.R' 'as_gtable.R' 'axis_canvas.R' 'cowplot.R' 'draw.R' 'get_plot_component.R' 'get_axes.R' 'get_titles.R' 'get_legend.R' 'get_panel.R' 'gtable.R' 'key_glyph.R' 'plot_grid.R' 'save.R' 'set_null_device.R' 'setup.R' 'stamp.R' 'themes.R' 'utils_ggplot2.R'",
+      "RoxygenNote": "7.3.2",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "no",
+      "Author": "Claus O. Wilke [aut, cre] (ORCID: <https://orcid.org/0000-0002-7470-9261>)",
+      "Maintainer": "Claus O. Wilke <wilke@austin.utexas.edu>",
       "Repository": "CRAN"
     },
     "cpp11": {
@@ -1285,38 +1321,6 @@
       "NeedsCompilation": "yes",
       "Author": "Tyson Barrett [aut, cre] (ORCID: <https://orcid.org/0000-0002-2137-1391>), Matt Dowle [aut], Arun Srinivasan [aut], Jan Gorecki [aut], Michael Chirico [aut] (ORCID: <https://orcid.org/0000-0003-0787-087X>), Toby Hocking [aut] (ORCID: <https://orcid.org/0000-0002-3146-0865>), Benjamin Schwendinger [aut] (ORCID: <https://orcid.org/0000-0003-3315-8114>), Ivan Krylov [aut] (ORCID: <https://orcid.org/0000-0002-0172-3812>), Pasha Stetsenko [ctb], Tom Short [ctb], Steve Lianoglou [ctb], Eduard Antonyan [ctb], Markus Bonsch [ctb], Hugh Parsonage [ctb], Scott Ritchie [ctb], Kun Ren [ctb], Xianying Tan [ctb], Rick Saporta [ctb], Otto Seiskari [ctb], Xianghui Dong [ctb], Michel Lang [ctb], Watal Iwasaki [ctb], Seth Wenchel [ctb], Karl Broman [ctb], Tobias Schmidt [ctb], David Arenburg [ctb], Ethan Smith [ctb], Francois Cocquemas [ctb], Matthieu Gomez [ctb], Philippe Chataignon [ctb], Nello Blaser [ctb], Dmitry Selivanov [ctb], Andrey Riabushenko [ctb], Cheng Lee [ctb], Declan Groves [ctb], Daniel Possenriede [ctb], Felipe Parages [ctb], Denes Toth [ctb], Mus Yaramaz-David [ctb], Ayappan Perumal [ctb], James Sams [ctb], Martin Morgan [ctb], Michael Quinn [ctb], @javrucebo [ctb], @marc-outins [ctb], Roy Storey [ctb], Manish Saraswat [ctb], Morgan Jacob [ctb], Michael Schubmehl [ctb], Davis Vaughan [ctb], Leonardo Silvestri [ctb], Jim Hester [ctb], Anthony Damico [ctb], Sebastian Freundt [ctb], David Simons [ctb], Elliott Sales de Andrade [ctb], Cole Miller [ctb], Jens Peder Meldgaard [ctb], Vaclav Tlapak [ctb], Kevin Ushey [ctb], Dirk Eddelbuettel [ctb], Tony Fischetti [ctb], Ofek Shilon [ctb], Vadim Khotilovich [ctb], Hadley Wickham [ctb], Bennet Becker [ctb], Kyle Haynes [ctb], Boniface Christian Kamgang [ctb], Olivier Delmarcell [ctb], Josh O'Brien [ctb], Dereck de Mezquita [ctb], Michael Czekanski [ctb], Dmitry Shemetov [ctb], Nitish Jha [ctb], Joshua Wu [ctb], Iago Giné-Vázquez [ctb], Anirban Chetia [ctb], Doris Amoakohene [ctb], Angel Feliz [ctb], Michael Young [ctb], Mark Seeto [ctb], Philippe Grosjean [ctb], Vincent Runge [ctb], Christian Wia [ctb], Elise Maigné [ctb], Vincent Rocher [ctb], Vijay Lulla [ctb], Aljaž Sluga [ctb], Bill Evans [ctb]",
       "Maintainer": "Tyson Barrett <t.barrett88@gmail.com>",
-      "Repository": "CRAN"
-    },
-    "dbarts": {
-      "Package": "dbarts",
-      "Version": "0.9-32",
-      "Source": "Repository",
-      "Date": "2025-04-02",
-      "Title": "Discrete Bayesian Additive Regression Trees Sampler",
-      "Authors@R": "c( person(\"Vincent\", \"Dorie\", role = c(\"aut\", \"cre\"), email = \"vdorie@gmail.com\", comment = c(ORCID = \"0000-0002-9576-3064\")), person(\"Hugh\", \"Chipman\", role = \"aut\", email = \"hugh.chipman@gmail.com\"), person(\"Robert\", \"McCulloch\", role = \"aut\", email = \"robert.mcculloch1@gmail.com\"), person(\"Armon\", \"Dadgar\", role = \"ctb\", comment = \"adaptive radix tree\"), person(\"R Core Team\", role = \"ctb\", comment = \"basis of RNG\"), person(\"Guido U\", \"Draheim\", role = \"ctb\", comment = \"ax_check_compile_flag.m4\"), person(\"Maarten\", \"Bosmans\", role = \"ctb\", comment = \"ax_check_compile_flag.m4\"), person(\"Christophe\", \"Tournayre\", role = \"ctb\", comment = \"ax_compiler_ext.m4, ax_ext.m4\"), person(\"Michael\", \"Petch\", role = \"ctb\", comment = \"ax_compiler_ext.m4, ax_ext.m4, ax_gcc_x86_avx_xgetbv.m4, ax_gcc_x86_cpuid.m4\"), person(\"Rafael\", \"de Lucena Valle\", role = \"ctb\", comment = \"ax_compiler_ext.m4, ax_ext.m4\"), person(\"Steven G.\", \"Johnson\", role = \"ctb\", comment = c(\"ax_compiler_vendor.m4, ax_gcc_x86_cpuid.m4, ax_pthread.m4\", ORCID = \"0000-0001-7327-4967\")), person(\"Matteo\", \"Frigo\", role = \"ctb\", comment = \"ax_compiler_vendor.m4, ax_gcc_x86_cpuid.m4\"), person(\"John\", \"Zaitseff\", role = \"ctb\", comment = \"ax_compiler_vendor.m4\"), person(\"Todd\", \"Veldhuizen\", role = \"ctb\", comment = \"ax_cxx_namespace_std.m4\"), person(\"Luc\", \"Maisonobe\", role = \"ctb\", comment = \"ax_cxx_namespace_std.m4\"), person(\"Scott\", \"Pakin\", role = \"ctb\", comment = c(\"ax_func_posix_memalign.m4\", ORCID = \"0000-0002-5220-1985\")), person(\"Daniel\", \"Richard G.\", role = \"ctb\", comment = \"ax_pthread.m4\"))",
-      "Depends": [
-        "R (>= 3.1-0)"
-      ],
-      "Imports": [
-        "stats",
-        "methods",
-        "graphics",
-        "parallel"
-      ],
-      "Suggests": [
-        "knitr",
-        "rmarkdown",
-        "tinytest"
-      ],
-      "VignetteBuilder": "knitr, rmarkdown",
-      "Description": "Fits Bayesian additive regression trees (BART; Chipman, George, and McCulloch (2010) <doi:10.1214/09-AOAS285>) while allowing the updating of predictors or response so that BART can be incorporated as a conditional model in a Gibbs/Metropolis-Hastings sampler. Also serves as a drop-in replacement for package 'BayesTree'.",
-      "License": "GPL (>= 2)",
-      "NeedsCompilation": "yes",
-      "Biarch": "yes",
-      "URL": "https://github.com/vdorie/dbarts",
-      "BugReports": "https://github.com/vdorie/dbarts/issues",
-      "Author": "Vincent Dorie [aut, cre] (<https://orcid.org/0000-0002-9576-3064>), Hugh Chipman [aut], Robert McCulloch [aut], Armon Dadgar [ctb] (adaptive radix tree), R Core Team [ctb] (basis of RNG), Guido U Draheim [ctb] (ax_check_compile_flag.m4), Maarten Bosmans [ctb] (ax_check_compile_flag.m4), Christophe Tournayre [ctb] (ax_compiler_ext.m4, ax_ext.m4), Michael Petch [ctb] (ax_compiler_ext.m4, ax_ext.m4, ax_gcc_x86_avx_xgetbv.m4, ax_gcc_x86_cpuid.m4), Rafael de Lucena Valle [ctb] (ax_compiler_ext.m4, ax_ext.m4), Steven G. Johnson [ctb] (ax_compiler_vendor.m4, ax_gcc_x86_cpuid.m4, ax_pthread.m4, <https://orcid.org/0000-0001-7327-4967>), Matteo Frigo [ctb] (ax_compiler_vendor.m4, ax_gcc_x86_cpuid.m4), John Zaitseff [ctb] (ax_compiler_vendor.m4), Todd Veldhuizen [ctb] (ax_cxx_namespace_std.m4), Luc Maisonobe [ctb] (ax_cxx_namespace_std.m4), Scott Pakin [ctb] (ax_func_posix_memalign.m4, <https://orcid.org/0000-0002-5220-1985>), Daniel Richard G. [ctb] (ax_pthread.m4)",
-      "Maintainer": "Vincent Dorie <vdorie@gmail.com>",
       "Repository": "CRAN"
     },
     "dbplyr": {
@@ -2729,35 +2733,6 @@
       "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
       "Repository": "CRAN"
     },
-    "itsadug": {
-      "Package": "itsadug",
-      "Version": "2.4.1",
-      "Source": "Repository",
-      "Date": "2022-06-17",
-      "Title": "Interpreting Time Series and Autocorrelated Data Using GAMMs",
-      "Authors@R": "c( person(\"Jacolien\", \"van Rij\", email=\"vanrij.jacolien@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Martijn\",\"Wieling\", role = \"aut\"),  person(\"R. Harald\",\"Baayen\", role = \"aut\"),  person(\"Hedderik\", \"van Rijn\", role = \"ctb\"))",
-      "Author": "Jacolien van Rij [aut, cre], Martijn Wieling [aut], R. Harald Baayen [aut], Hedderik van Rijn [ctb]",
-      "Maintainer": "Jacolien van Rij <vanrij.jacolien@gmail.com>",
-      "Description": "GAMM (Generalized Additive Mixed Modeling; Lin & Zhang, 1999) as implemented in the R package 'mgcv' (Wood, S.N., 2006; 2011) is a nonlinear regression analysis which is particularly useful for time course data such as EEG, pupil dilation, gaze data (eye tracking), and articulography recordings, but also for behavioral data such as reaction times and response data. As time course measures are sensitive to autocorrelation problems, GAMMs implements methods to reduce the autocorrelation problems. This package includes functions for the evaluation of GAMM models (e.g., model comparisons, determining regions of significance, inspection of autocorrelational structure in residuals) and interpreting of GAMMs (e.g., visualization of complex interactions, and contrasts).",
-      "License": "GPL (>= 2)",
-      "LazyData": "true",
-      "Depends": [
-        "R (>= 4.0)",
-        "mgcv (>= 1.8)",
-        "plotfunctions (>= 1.4)"
-      ],
-      "VignetteBuilder": "knitr",
-      "Suggests": [
-        "knitr",
-        "xtable",
-        "sp",
-        "data.table"
-      ],
-      "RoxygenNote": "7.2.0",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Repository": "CRAN"
-    },
     "jquerylib": {
       "Package": "jquerylib",
       "Version": "0.1.4",
@@ -3552,40 +3527,6 @@
       "Maintainer": "Henrik Bengtsson <henrikb@braju.com>",
       "Repository": "CRAN"
     },
-    "permute": {
-      "Package": "permute",
-      "Version": "0.9-8",
-      "Source": "Repository",
-      "Title": "Functions for Generating Restricted Permutations of Data",
-      "Date": "2025-06-25",
-      "Authors@R": "c(person(given = \"Gavin L.\", family = \"Simpson\", email = \"ucfagls@gmail.com\", role = c(\"aut\", \"cph\", \"cre\"), comment = c(ORCID = \"0000-0002-9084-8413\")), person(given = \"R Core Team\", role = \"cph\"), person(given = \"Douglas M.\", family = \"Bates\", role = \"ctb\"), person(given = \"Jari\", family = \"Oksanen\", role = \"ctb\"))",
-      "Depends": [
-        "R (>= 3.6.0)"
-      ],
-      "Imports": [
-        "stats"
-      ],
-      "Suggests": [
-        "vegan (>= 2.0-0)",
-        "testthat (>= 0.5)",
-        "parallel",
-        "knitr",
-        "rmarkdown",
-        "bookdown",
-        "sessioninfo"
-      ],
-      "Description": "A set of restricted permutation designs for freely exchangeable, line transects (time series), and spatial grid designs plus permutation of blocks (groups of samples) is provided. 'permute' also allows split-plot designs, in which the whole-plots or split-plots or both can be freely-exchangeable or one of the restricted designs. The 'permute' package is modelled after the permutation schemes of 'Canoco 3.1' (and later) by Cajo ter Braak.",
-      "License": "GPL-2",
-      "ByteCompile": "true",
-      "URL": "https://github.com/gavinsimpson/permute",
-      "BugReports": "https://github.com/gavinsimpson/permute/issues",
-      "Copyright": "see file COPYRIGHTS",
-      "VignetteBuilder": "knitr",
-      "NeedsCompilation": "no",
-      "Author": "Gavin L. Simpson [aut, cph, cre] (ORCID: <https://orcid.org/0000-0002-9084-8413>), R Core Team [cph], Douglas M. Bates [ctb], Jari Oksanen [ctb]",
-      "Maintainer": "Gavin L. Simpson <ucfagls@gmail.com>",
-      "Repository": "CRAN"
-    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.11.0",
@@ -3664,32 +3605,6 @@
       "URL": "https://github.com/r-lib/pkgconfig#readme",
       "BugReports": "https://github.com/r-lib/pkgconfig/issues",
       "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Repository": "CRAN"
-    },
-    "plotfunctions": {
-      "Package": "plotfunctions",
-      "Version": "1.4",
-      "Source": "Repository",
-      "Title": "Various Functions to Facilitate Visualization of Data and Analysis",
-      "Date": "2020-04-30",
-      "Authors@R": "person(\"Jacolien\", \"van Rij\", role=c(\"aut\", \"cre\"), email=\"vanrij.jacolien@gmail.com\")",
-      "Author": "Jacolien van Rij [aut, cre]",
-      "Maintainer": "Jacolien van Rij <vanrij.jacolien@gmail.com>",
-      "Description": "When analyzing data, plots are a helpful tool for visualizing data and interpreting statistical models. This package provides a set of simple tools for building plots incrementally, starting with an empty plot region, and adding bars, data points, regression lines, error bars, gradient legends, density distributions in the margins, and even pictures. The package builds further on R graphics by simply combining functions and settings in order to reduce the amount of code to produce for the user. As a result, the package does not use formula input or special syntax, but can be used in combination with default R plot functions. Note: Most of the functions were part of the package 'itsadug', which is now split in two packages: 1. the package 'itsadug', which contains the core functions for visualizing and evaluating nonlinear regression models, and 2. the package 'plotfunctions', which contains more general plot functions.",
-      "URL": "https://jacolienvanrij.com/tutorials.html",
-      "License": "GPL (>= 2)",
-      "LazyData": "true",
-      "Depends": [
-        "R (>= 2.10)"
-      ],
-      "VignetteBuilder": "knitr",
-      "Suggests": [
-        "knitr",
-        "sp"
-      ],
-      "Encoding": "UTF-8",
-      "RoxygenNote": "7.1.0",
       "NeedsCompilation": "no",
       "Repository": "CRAN"
     },
@@ -4085,6 +4000,40 @@
       "Repository": "CRAN",
       "Author": "Leo Breiman [aut] (Fortran original), Adele Cutler [aut] (Fortran original), Andy Liaw [aut, cre] (R port), Matthew Wiener [aut] (R port)",
       "Maintainer": "Andy Liaw <andy_liaw@merck.com>"
+    },
+    "ranger": {
+      "Package": "ranger",
+      "Version": "0.17.0",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "A Fast Implementation of Random Forests",
+      "Date": "2024-11-08",
+      "Authors@R": "c( person(\"Marvin N.\", \"Wright\", email = \"cran@wrig.de\", role = c(\"aut\", \"cre\")), person(\"Stefan\", \"Wager\", role = \"ctb\"), person(\"Philipp\", \"Probst\", role = \"ctb\"))",
+      "Description": "A fast implementation of Random Forests, particularly suited for high dimensional data. Ensembles of classification, regression, survival and probability prediction trees are supported. Data from genome-wide association studies can be analyzed efficiently. In addition to data frames, datasets of class 'gwaa.data' (R package 'GenABEL') and 'dgCMatrix' (R package 'Matrix')  can be directly analyzed.",
+      "License": "GPL-3",
+      "Imports": [
+        "Rcpp (>= 0.11.2)",
+        "Matrix"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "RcppEigen"
+      ],
+      "Depends": [
+        "R (>= 3.1)"
+      ],
+      "Suggests": [
+        "survival",
+        "testthat"
+      ],
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.2",
+      "URL": "https://imbs-hl.github.io/ranger/, https://github.com/imbs-hl/ranger",
+      "BugReports": "https://github.com/imbs-hl/ranger/issues",
+      "NeedsCompilation": "yes",
+      "Author": "Marvin N. Wright [aut, cre], Stefan Wager [ctb], Philipp Probst [ctb]",
+      "Maintainer": "Marvin N. Wright <cran@wrig.de>",
+      "Repository": "CRAN"
     },
     "rappdirs": {
       "Package": "rappdirs",
@@ -5675,37 +5624,6 @@
       "NeedsCompilation": "yes",
       "Author": "Hadley Wickham [aut], Lionel Henry [aut], Davis Vaughan [aut, cre], data.table team [cph] (Radix sort based on data.table's forder() and their contribution to R's order()), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Davis Vaughan <davis@posit.co>",
-      "Repository": "CRAN"
-    },
-    "vegan": {
-      "Package": "vegan",
-      "Version": "2.7-1",
-      "Source": "Repository",
-      "Title": "Community Ecology Package",
-      "Authors@R": "c(person(\"Jari\", \"Oksanen\", role=c(\"aut\",\"cre\"), email=\"jhoksane@gmail.com\"), person(\"Gavin L.\", \"Simpson\", role=\"aut\", email=\"ucfagls@gmail.com\"), person(\"F. Guillaume\", \"Blanchet\", role=\"aut\"), person(\"Roeland\", \"Kindt\", role=\"aut\"), person(\"Pierre\", \"Legendre\", role=\"aut\"), person(\"Peter R.\", \"Minchin\", role=\"aut\"), person(\"R.B.\", \"O'Hara\", role=\"aut\"), person(\"Peter\", \"Solymos\", role=\"aut\"), person(\"M. Henry H.\", \"Stevens\", role=\"aut\"), person(\"Eduard\", \"Szoecs\", role=\"aut\"), person(\"Helene\", \"Wagner\", role=\"aut\"), person(\"Matt\", \"Barbour\", role=\"aut\"), person(\"Michael\", \"Bedward\", role=\"aut\"), person(\"Ben\", \"Bolker\", role=\"aut\"), person(\"Daniel\", \"Borcard\", role=\"aut\"), person(\"Tuomas\", \"Borman\", role=\"aut\"), person(\"Gustavo\", \"Carvalho\", role=\"aut\"), person(\"Michael\", \"Chirico\", role=\"aut\"), person(\"Miquel\", \"De Caceres\", role=\"aut\"), person(\"Sebastien\", \"Durand\", role=\"aut\"), person(\"Heloisa Beatriz Antoniazi\", \"Evangelista\", role=\"aut\"), person(\"Rich\", \"FitzJohn\", role=\"aut\"), person(\"Michael\", \"Friendly\", role=\"aut\"), person(\"Brendan\",\"Furneaux\", role=\"aut\"), person(\"Geoffrey\", \"Hannigan\", role=\"aut\"), person(\"Mark O.\", \"Hill\", role=\"aut\"), person(\"Leo\", \"Lahti\", role=\"aut\"), person(\"Cameron\", \"Martino\", role=\"aut\"), person(\"Dan\", \"McGlinn\", role=\"aut\"), person(\"Marie-Helene\", \"Ouellette\", role=\"aut\"), person(\"Eduardo\", \"Ribeiro Cunha\", role=\"aut\"), person(\"Tyler\", \"Smith\", role=\"aut\"), person(\"Adrian\", \"Stier\", role=\"aut\"), person(\"Cajo J.F.\", \"Ter Braak\", role=\"aut\"), person(\"James\", \"Weedon\", role=\"aut\"))",
-      "Depends": [
-        "permute (>= 0.9-0)",
-        "R (>= 4.1.0)"
-      ],
-      "Suggests": [
-        "parallel",
-        "knitr",
-        "markdown"
-      ],
-      "Imports": [
-        "MASS",
-        "cluster",
-        "lattice",
-        "mgcv"
-      ],
-      "VignetteBuilder": "utils, knitr",
-      "Description": "Ordination methods, diversity analysis and other functions for community and vegetation ecologists.",
-      "License": "GPL-2",
-      "BugReports": "https://github.com/vegandevs/vegan/issues",
-      "URL": "https://vegandevs.github.io/vegan/, https://github.com/vegandevs/vegan",
-      "NeedsCompilation": "yes",
-      "Author": "Jari Oksanen [aut, cre], Gavin L. Simpson [aut], F. Guillaume Blanchet [aut], Roeland Kindt [aut], Pierre Legendre [aut], Peter R. Minchin [aut], R.B. O'Hara [aut], Peter Solymos [aut], M. Henry H. Stevens [aut], Eduard Szoecs [aut], Helene Wagner [aut], Matt Barbour [aut], Michael Bedward [aut], Ben Bolker [aut], Daniel Borcard [aut], Tuomas Borman [aut], Gustavo Carvalho [aut], Michael Chirico [aut], Miquel De Caceres [aut], Sebastien Durand [aut], Heloisa Beatriz Antoniazi Evangelista [aut], Rich FitzJohn [aut], Michael Friendly [aut], Brendan Furneaux [aut], Geoffrey Hannigan [aut], Mark O. Hill [aut], Leo Lahti [aut], Cameron Martino [aut], Dan McGlinn [aut], Marie-Helene Ouellette [aut], Eduardo Ribeiro Cunha [aut], Tyler Smith [aut], Adrian Stier [aut], Cajo J.F. Ter Braak [aut], James Weedon [aut]",
-      "Maintainer": "Jari Oksanen <jhoksane@gmail.com>",
       "Repository": "CRAN"
     },
     "vip": {

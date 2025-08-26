@@ -1,17 +1,20 @@
 #----------------------------------------------------------------------------------------
-# File: 01_outlier_removal.R
+# File: 02_outlier_removal.R
 # Project: EnglishVQ
 # Author: Mykel Brinkerhoff
 # Date: 2025-08-25 (M)
 # Description: Removes outliers based on f0, Formants, and Energy
 #
 # Usage:
-#   Rscript 01_outlier_removal.R
+#   Rscript 02_outlier_removal.R
 #
 # Notes:
 #   - Ensure all required packages are installed.
 #   - Modify the script as needed for your specific dataset and analysis requirements.
 #----------------------------------------------------------------------------------------
+
+# Adding function for calculating Mahalanobis distance
+source(here::here("scripts", "functions", "vmahalanobis.R"))
 
 # create a new dataframe for the cleaned data
 vq_clean <- vq_raw
