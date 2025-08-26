@@ -34,13 +34,12 @@ library(tidyverse) # for data manipulation, graphic, and data wrangling
 library(viridis) # for colorblind friendly colors in ggplot
 library(here) # for creating pathways relative to the top-level directory
 library(reshape2) # for data manipulation
-library(xtable) # For creating Latex tables
-library(plotrix) # For functions for st.error and st.dev
-library(cowplot) # For creating complex plots
-library(plotly) # For creating interactive 3D-plots
 
 # Load in the raw vq data at data/raw/VoicesVQ_data.csv
 vq_raw <- readr::read_csv(here::here("data/raw/", "VoicesVQ_data.csv"))
 
 # Create a variable for colorblind palette
 colorblind <- grDevices::palette.colors(palette = "Okabe-Ito")
+
+# Adding function for calculating Mahalanobis distance
+source(here::here("scripts", "functions", "vmahalanobis.R"))
