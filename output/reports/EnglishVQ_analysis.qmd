@@ -1,0 +1,245 @@
+---
+title: "Perception of English Voice Quality"
+subtitle: "Random Forest Analysis"
+format: 
+  html:
+    toc: true
+execute: 
+  echo: false
+  warning: false
+  message: false
+author: Mykel Brinkerhoff
+date: 2025-08-27 (W)
+---
+
+```{r}
+#| label: load-packages
+#| include: false
+
+# Modeling process packages
+library(lme4) # for creating residual H1*
+library(rsample) # for resampling procedures
+library(caret) # for resampling and model training
+library(randomForest) # for tree generation
+library(vip) # for feature interpretation
+library(ranger) # for performing Random Forest CART analysis
+
+# Helper packages
+library(tidyverse) # for data manipulation, graphic, and data wrangling
+library(viridis) # for colorblind friendly colors in ggplot
+library(here) # for creating pathways relative to the top-level directory
+library(reshape2) # for data manipulation
+library(Cairo) # for saving the plots as .eps files
+library(cowplot) # For creating complex plots
+```
+
+```{r}
+#| label: adding data
+#| include: false
+
+# Load in the raw vq data at data/raw/VoicesVQ_data.csv
+vq_raw <- readr::read_csv(here::here("data", "raw", "VoicesVQ_data.csv"))
+
+# load in the classification data at data/raw/b-c_voice_cluster_labels.csv
+vq_classification <- readr::read_csv(here::here(
+  "data",
+  "raw",
+  "b-c_voice_cluster_labels.csv"
+))
+
+# Create a variable for colorblind palette
+colorblind <- grDevices::palette.colors(palette = "Okabe-Ito")
+
+# Remove unneeded columns
+vq_raw <- vq_raw |>
+  dplyr::select(
+    -c(
+      sF0_mean,
+      pF0_mean,
+      shrF0_mean,
+      oF0_mean,
+      pF1_mean,
+      pF2_mean,
+      pF3_mean,
+      pF4_mean,
+      oF1_mean,
+      oF2_mean,
+      oF3_mean,
+      oF4_mean,
+      pB1_mean,
+      pB2_mean,
+      pB3_mean,
+      pB4_mean,
+      oB1_mean,
+      oB2_mean,
+      oB3_mean,
+      oB4_mean
+    )
+  )
+
+# left_join vq_raw with vq_classification by Gender and where Voice = Talker
+vq_raw <- vq_raw |>
+  dplyr::inner_join(vq_classification, by = c("Talker" = "Voice", "Gender")) |>
+  dplyr::rename_at("ClusterCoding", ~"Phonation") |>
+  dplyr::relocate(Phonation, .after = Label) |>
+  dplyr::select(-c(median_stan_xmouse, cluster_id))
+
+# Adding function for calculating Mahalanobis distance
+source(here::here("scripts", "functions", "vmahalanobis.R"))
+
+# create a new dataframe for the cleaned data
+vq_clean <- vq_raw
+
+# flag for f0 outliers
+vq_clean <- vq_clean |>
+  dplyr::group_by(Talker) |>
+  dplyr::mutate(
+    F0z = (strF0_mean - mean(strF0_mean, na.rm = T)) / sd(strF0_mean)
+  ) |>
+  dplyr::ungroup()
+
+vq_clean <- vq_clean |>
+  dplyr::mutate(f0_outlier = dplyr::if_else(abs(F0z) > 3, "outlier", "OK"))
+
+# Flag for formant outlier
+## set distance cutoff for Mahalanobis distance
+distance_cutoff <- 6
+
+## calculate mahalnobis distance on formant
+vq_clean <- vq_clean |>
+  dplyr::group_by(Vowel) |>
+  # dplyr::group_by(Talker) |>
+  dplyr::do(vmahalanobis(.)) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(formant_outlier = NA)
+
+## visualize the formant outliers
+vq_clean |>
+  dplyr::filter(is.na(formant_outlier)) |>
+  ggplot2::ggplot(aes(
+    x = sF2_mean,
+    y = sF1_mean,
+    colour = zF1F2 > distance_cutoff
+  )) +
+  ggplot2::geom_point(size = 0.6) +
+  ggplot2::facet_wrap(. ~ Vowel) +
+  ggplot2::scale_x_reverse(limits = c(3500, 0), position = "top") +
+  ggplot2::scale_y_reverse(limits = c(2000, 0), position = "right") +
+  ggplot2::theme_bw()
+
+for (i in 1:nrow(vq_clean)) {
+  if (!is.na(vq_clean$zF1F2[i])) {
+    if (vq_clean$zF1F2[i] > 6) {
+      vq_clean$formant_outlier[i] <- "outlier"
+    }
+  }
+}
+
+## visualize with formant outliers removed
+vq_clean |>
+  dplyr::filter(is.na(formant_outlier)) |>
+  ggplot2::ggplot(aes(
+    x = sF2_mean,
+    y = sF1_mean
+  )) +
+  ggplot2::geom_point(size = 0.6) +
+  ggplot2::facet_wrap(. ~ Vowel) +
+  ggplot2::scale_x_reverse(limits = c(3500, 0), position = "top") +
+  ggplot2::scale_y_reverse(limits = c(2000, 0), position = "right") +
+  ggplot2::theme_bw()
+
+# flag energy outliers
+## convert 0s to NA
+vq_clean$Energy_mean[vq_clean$Energy_mean == 0] <- NA
+
+## log10 transform energy
+vq_clean <- vq_clean |>
+  dplyr::mutate(log_energy = log10(Energy_mean))
+
+# remove f0, formant, and energy outliers
+vq_clean <- vq_clean |>
+  dplyr::filter(f0_outlier == "OK") |>
+  dplyr::filter(is.na(formant_outlier)) |>
+  dplyr::filter(!is.na(log_energy))
+
+# number of rows removed as outliers
+nrow(vq_raw) - nrow(vq_clean)
+
+# remove columns that where created
+vq_clean <- vq_clean |>
+  dplyr::select(-c(f0_outlier, formant_outlier, zF1F2, F0z, Energy_mean))
+
+# Standardization across all pertinate columns. Variables are speaker normalized.
+
+vq_clean <- vq_clean |>
+  dplyr::group_by(Talker) |>
+  dplyr::mutate(
+    dplyr::across(
+      .cols = -c(
+        Gender,
+        Vowel,
+        Word,
+        Filename,
+        Label,
+        Phonation,
+        seg_Start,
+        seg_End
+      ),
+      .fns = ~ (. - mean(., na.rm = TRUE) / sd(., na.rm = TRUE)),
+      .names = "{.col}_z"
+    )
+  )
+
+# normalize soe
+vq_clean <- vq_clean |>
+  dplyr::group_by(Talker) |>
+  dplyr::mutate(
+    log_soe = log10(soe_mean + 0.001),
+    m_log_soe = mean(log_soe, na.rm = T),
+    sd_log_soe = sd(log_soe, na.rm = T),
+    z_log_soe = (log_soe - m_log_soe) / sd_log_soe,
+    max_soe = max(log_soe),
+    min_soe = min(log_soe),
+    soe_norm = (log_soe - min_soe) / (max_soe - min_soe)
+  ) |>
+  dplyr::select(
+    -c(log_soe, m_log_soe, sd_log_soe, z_log_soe, max_soe, min_soe, soe_mean_z)
+  ) |>
+  dplyr::ungroup()
+
+# Adding function for calculating residual H1*
+source(here::here("scripts", "functions", "calc_residH1.R"))
+
+# Applying the function to the dataframe
+vq_clean <- vq_clean |>
+  calc_residH1(
+    h1cz_col = "H1c_mean_z",
+    energyz_col = "log_energy_z",
+    speaker_col = "Talker"
+  )
+
+vq_resid <- vq_clean |>
+  select(-H1c_mean_z)
+
+# Factorizing the phonation variable
+vq_resid$Phonation <- factor(vq_resid$Phonation)
+
+```
+
+## Data 
+
+The voice quality and classification data comes from `VoicesVQ_data` and `b-c_voice_cluster_labels`. 
+
+`VoicesVQ_data` contains the output of VoiceSauce. 
+
+`b-c_voice_cluster_labels` contains the classification labels that participants assigned to each speaker. 
+
+These data were combined so each line of `VoicesVQ_data` contained the classification label based on subject id. This was stored as a new dataframe called `vq_raw`. This dataframe was cleaned of outliers following Brinekrhoff & McGuire 2025. 
+
+Data was then standardized to make comparisons easier. Energy was first log-transformed to account of its right tail before being z-scored. SoE was normalized following Garellek et al. 2020. H1* was normalized following Chai & Garellek 2022 and replaced z-scored H1*. 
+
+Uncorrected acoustic measures, the non-STRAIGHT f0, and non-snack formants and bandwidths were removed. 
+
+This resulted in a dataframe with the following columns: 
+  - `Gender`: 
+  - 

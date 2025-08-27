@@ -1,9 +1,9 @@
 #----------------------------------------------------------------------------------------
-# File: .R
-# Project:
+# File: 09_variableImportance.R
+# Project: EnglishVQ
 # Author: Mykel Brinkerhoff
-# Date: YYYY-MM-DD (M-Su)
-# Description: What does this script do?
+# Date: 2025-08-26 (Tu)
+# Description: Plots the variable importance.
 #
 # Usage:
 #   Rscript .R
