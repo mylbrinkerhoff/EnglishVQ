@@ -26,6 +26,7 @@ vq_clean <- vq_clean |>
         Word,
         Filename,
         Label,
+        Phonation,
         seg_Start,
         seg_End
       ),
@@ -47,6 +48,6 @@ vq_clean <- vq_clean |>
     soe_norm = (log_soe - min_soe) / (max_soe - min_soe)
   ) |>
   dplyr::select(
-    -c(log_soe, m_log_soe, sd_log_soe, z_log_soe, max_soe, min_soe)
+    -c(log_soe, m_log_soe, sd_log_soe, z_log_soe, max_soe, min_soe, soe_mean_z)
   ) |>
   dplyr::ungroup()

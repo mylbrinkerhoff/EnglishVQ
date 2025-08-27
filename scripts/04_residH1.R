@@ -16,9 +16,10 @@
 # Adding function for calculating residual H1*
 source(here::here("scripts", "functions", "calc_residH1.R"))
 
+# Applying the function to the dataframe
 vq_clean <- vq_clean |>
   calc_residH1(
     h1cz_col = "H1c_mean_z",
-    energyz_col = "Energy_mean_z",
+    energyz_col = "log_energy_z",
     speaker_col = "Talker"
   )

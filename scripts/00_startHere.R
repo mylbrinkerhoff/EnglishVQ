@@ -34,7 +34,14 @@ library(cowplot) # For creating complex plots
 
 
 # Load in the raw vq data at data/raw/VoicesVQ_data.csv
-vq_raw <- readr::read_csv(here::here("data/raw/", "VoicesVQ_data.csv"))
+vq_raw <- readr::read_csv(here::here("data", "raw", "VoicesVQ_data.csv"))
+
+# load in the classification data at data/raw/b-c_voice_cluster_labels.csv
+vq_classification <- readr::read_csv(here::here(
+  "data",
+  "raw",
+  "b-c_voice_cluster_labels.csv"
+))
 
 # Create a variable for colorblind palette
 colorblind <- grDevices::palette.colors(palette = "Okabe-Ito")

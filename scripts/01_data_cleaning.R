@@ -39,3 +39,10 @@ vq_raw <- vq_raw |>
       oB4_mean
     )
   )
+
+# left_join vq_raw with vq_classification by Gender and where Voice = Talker
+vq_raw <- vq_raw |>
+  dplyr::inner_join(vq_classification, by = c("Talker" = "Voice", "Gender")) |>
+  dplyr::rename_at("ClusterCoding", ~"Phonation") |>
+  dplyr::relocate(Phonation, .after = Label) |>
+  dplyr::select(-c(median_stan_xmouse, cluster_id))

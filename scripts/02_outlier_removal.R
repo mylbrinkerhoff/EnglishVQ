@@ -96,4 +96,4 @@ nrow(vq_raw) - nrow(vq_clean)
 
 # remove columns that where created
 vq_clean <- vq_clean |>
-  dplyr::select(-c(f0_outlier, formant_outlier, zF1F2, F0z))
+  dplyr::select(-c(f0_outlier, formant_outlier, zF1F2, F0z, Energy_mean))
