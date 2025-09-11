@@ -4,8 +4,11 @@ subtitle: "Random Forest Analysis"
 format: 
   html:
     toc: true
+    code-tools: true
+    self-contained: true
+    embed-resources: true
 execute: 
-  echo: false
+  code-fold: true
   warning: false
   message: false
 author: Mykel Brinkerhoff
@@ -34,7 +37,7 @@ library(cowplot) # For creating complex plots
 ```
 
 ```{r}
-#| label: adding data
+#| label: adding_data
 #| include: false
 
 # Load in the raw vq data at data/raw/VoicesVQ_data.csv
@@ -218,12 +221,12 @@ vq_clean <- vq_clean |>
     speaker_col = "Talker"
   )
 
+# uses the dataframe where residual H1* was added.
 vq_resid <- vq_clean |>
   select(-H1c_mean_z)
 
 # Factorizing the phonation variable
 vq_resid$Phonation <- factor(vq_resid$Phonation)
-
 ```
 
 ## Data 
@@ -240,6 +243,271 @@ Data was then standardized to make comparisons easier. Energy was first log-tran
 
 Uncorrected acoustic measures, the non-STRAIGHT f0, and non-snack formants and bandwidths were removed. 
 
-This resulted in a dataframe with the following columns: 
-  - `Gender`: 
-  - 
+This resulted in a dataframe with the following columns:
+
+  - `Gender`: factor indicating the talkers' gender
+  - `Talker`: factor indicating the speakers' id
+  - `Vowel`: factor indicating which vowel
+  - `Word`: Character
+  - `Filename`: character
+  - `Label`: character
+  - `Phonation`: character
+  - `seg_Start`:   numeric
+  - `seg_End`:   numeric
+  - `H2c_mean_z`:   numeric
+  - `H4c_mean_z`:   numeric
+  - `A1c_mean_z`:   numeric
+  - `A2c_mean_z`:   numeric
+  - `A3c_mean_z`:   numeric
+  - `H2Kc_mean_z`:   numeric
+  - `H1H2c_mean_z`:   numeric
+  - `H2H4c_mean_z`:   numeric
+  - `H1A1c_mean_z`:   numeric
+  - `H1A2c_mean_z`:   numeric
+  - `H1A3c_mean_z`:   numeric
+  - `H42Kc_mean_z`:   numeric
+  - `H2KH5Kc_mean_z`:   numeric
+  - `CPP_mean_z`:   numeric
+  - `HNR05_mean_z`:   numeric
+  - `HNR15_mean_z`:   numeric
+  - `HNR25_mean_z`:   numeric
+  - `HNR35_mean_z`:   numeric
+  - `SHR_mean_z`:   numeric
+  - `strF0_mean_z`:   numeric
+  - `sF1_mean_z`:   numeric
+  - `sF2_mean_z`:   numeric
+  - `sF3_mean_z`:   numeric
+  - `sF4_mean_z`:   numeric
+  - `sB1_mean_z`:   numeric
+  - `sB2_mean_z`:   numeric
+  - `sB3_mean_z`:   numeric
+  - `sB4_mean_z`:   numeric
+  - `epoch_mean_z`:   numeric
+  - `log_energy_z`:   numeric
+  - `soe_norm`:   numeric
+  - `resid_H1c`:   numeric
+
+## Analysis
+### Preparing for analysis
+
+I removed the columns `Gender`, `Talker`, `Vowel`, `Word`, `Filename`, `Label`,`seg_Start`, and `seg_End` from the dataframe and factorized `Phonation` for Random Forest analysis. 
+
+### Splitting into test and training 
+```{r}
+#| label: splitting
+#| code-fold: true
+
+# stratified sampling with the rsample package with respect to phonation
+set.seed(123) # needed for reproducibility
+resid_split <- rsample::initial_split(
+  vq_resid,
+  prop = 0.7,
+  strata = "Phonation"
+)
+resid_train <- rsample::training(resid_split)
+resid_test <- rsample::testing(resid_split)
+```
+
+Data was randommly split into a testing and training dataset. The proporations of each phonation type was maintained in each dataset. 
+
+```{r}
+#| label: tab_training_split
+#| fig-cap: "Phonation proporation in the training dataset"
+
+table(resid_train$Phonation) |>
+  prop.table()
+```
+```{r}
+#| label: tab_testing_split
+#| fig-cap: "Phonation proporation in the testing dataset"
+
+table(resid_test$Phonation) |>
+  prop.table()
+
+```
+
+
+### Tuning the model
+
+Random Forest models need to have the correct parameter settings for the analysis to work. These parameters were chosen based on a grid search. 
+
+```{r}
+#| label: hypergrid_search
+
+# determine the number of features
+resid_features <- length(setdiff(names(vq_resid), "Phonation"))
+
+# Train a default Random Forest model for comparison
+resid_default <- ranger::ranger(
+  formula = Phonation ~ .,
+  data = resid_train,
+  num.trees = resid_features * 100,
+  mtry = floor(sqrt(resid_features)),
+  respect.unordered.factors = "order",
+  seed = 123
+)
+
+# default prediction error for comparison
+resid_error <- resid_default$prediction.error
+
+# generate hypergrid paramaters
+hypergrid_resid <- expand.grid(
+  mtry = floor(resid_features * c(.05, .15, .2, .25, .333, .4, 1)),
+  min.node.size = c(1, 3, 5, 10),
+  replace = c(TRUE, FALSE),
+  sample.fraction = c(.5, .63, .8),
+  error = NA
+)
+
+# execute full grid search
+for (i in seq_len(nrow(hypergrid_resid))) {
+  # fit the model with the i-th hyperparameter combonation
+  fit_resid <- ranger::ranger(
+    formula = Phonation ~ .,
+    data = resid_train,
+    num.trees = resid_features * 100,
+    mtry = hypergrid_resid$mtry[i],
+    min.node.size = hypergrid_resid$min.node.size[i],
+    replace = hypergrid_resid$replace[i],
+    sample.fraction = hypergrid_resid$sample.fraction[i],
+    respect.unordered.factors = "order",
+    seed = 123
+  )
+
+  # export OOB RMSE
+  hypergrid_resid$error[i] <- fit_resid$prediction.error
+}
+
+# assessing the model parameters
+hypergrid_resid %>%
+  dplyr::arrange(error) %>%
+  dplyr::mutate(perc_gain = (resid_error - error) / resid_error * 100) %>%
+  head(10)
+```
+
+<!-- 
+# create a hypergrid for number of trees
+hypergrid_resid_trees <- expand.grid(
+  num.trees = seq(50, 2000, 50),
+  mtry = floor(resid_features * c(.05, .15, .2, .25, .333, .4, 1)),
+  accuracy = NA
+)
+
+# perform grid search for correct number of trees
+for (i in seq_len(nrow(hypergrid_resid_trees))) {
+  # fit the model with i-th hyperparameter combination
+  fit_resid_trees <- ranger::ranger(
+    formula = Phonation ~ .,
+    data = resid_train,
+    num.trees = hypergrid_resid_trees$num.trees[i],
+    mtry = hypergrid_resid_trees$mtry[i],
+    min.node.size = 5,
+    replace = FALSE,
+    sample.fraction = 0.8,
+    respect.unordered.factors = "order",
+    seed = 123
+  )
+
+  # export OOB RMSE
+  hypergrid_resid_trees$accuracy[i] <- fit_resid_trees$prediction.error
+}
+
+# determine what the best number of trees
+hypergrid_resid_trees %>%
+  dplyr::arrange(accuracy) %>%
+  mutate(perc_gain = (resid_error - accuracy) / resid_error * 100) %>%
+  head(10)
+
+# plotting the results
+hypergrid_resid_trees %>%
+  ggplot(aes(x = num.trees, y = accuracy, color = factor(mtry))) +
+  geom_line(linewidth = 1) +
+  # geom_line(aes(linetype = factor(mtry)), linewidth = 1) +
+  labs(
+    title = "Prediction error for Random Forest Hyperparameter Tuning",
+    x = "number of trees",
+    y = "% incorrect",
+    color = "mtry"
+  ) +
+  scale_color_manual(values = colorblind) +
+  theme_bw()
+
+# final random forest model with impurity
+resid_final_impurity <- ranger::ranger(
+  formula = Phonation ~ .,
+  data = resid_train,
+  num.trees = 650,
+  mtry = 12,
+  min.node.size = 5,
+  replace = FALSE,
+  sample.fraction = 0.8,
+  respect.unordered.factors = "order",
+  seed = 123,
+  classification = TRUE,
+  importance = "impurity",
+  probability = TRUE
+)
+
+# final model with permutation
+resid_final_permutation <- ranger::ranger(
+  formula = Phonation ~ .,
+  data = resid_train,
+  num.trees = 650,
+  mtry = 12,
+  min.node.size = 5,
+  replace = FALSE,
+  sample.fraction = 0.8,
+  respect.unordered.factors = "order",
+  seed = 123,
+  classification = TRUE,
+  importance = "permutation",
+  probability = TRUE
+)
+
+# Extract variable importance scores for impurity-based importance
+resid_impurity_scores <- vip::vi(resid_final_impurity)
+
+# Extract variable importance scores for permutation-based importance
+resid_permutation_scores <- vip::vi(resid_final_permutation)
+
+# Create a Lollipop chart of variable importance scores
+resid_impurity_plot <- resid_impurity_scores |>
+  dplyr::rename_with(~ stringr::str_remove_all(., "_mean_z$|_z$|_norm$")) |>
+  ggplot2::ggplot(
+    aes(x = reorder(Variable, Importance), y = Importance)
+  ) +
+  geom_segment(aes(xend = Variable, yend = 0)) +
+  geom_point(size = 2) +
+  coord_flip() +
+  labs(
+    title = "Impurity Importance",
+    x = "Variable",
+    y = "Importance (Impurity)"
+  ) +
+  theme_bw()
+resid_impurity_plot
+
+resid_permutation_plot <- resid_permutation_scores |>
+  ggplot2::ggplot(
+    aes(x = reorder(Variable, Importance), y = Importance)
+  ) +
+  geom_segment(aes(xend = Variable, yend = 0)) +
+  geom_point(size = 2) +
+  coord_flip() +
+  labs(
+    title = "Permutation Importance",
+    x = "Variable",
+    y = "Importance (Permutation)"
+  ) +
+  theme_bw()
+resid_permutation_plot
+
+resid_variable_importance_plot <- cowplot::plot_grid(
+  resid_impurity_plot,
+  resid_permutation_plot,
+  nrow = 1
+)
+resid_variable_importance_plot -->
+
+
+
