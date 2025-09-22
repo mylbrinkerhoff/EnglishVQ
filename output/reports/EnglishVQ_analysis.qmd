@@ -421,15 +421,31 @@ for (i in seq_len(nrow(hypergrid_resid))) {
 This results in a hypergrid with the OOB error for each combination of parameters. The top 10 models with the lowest OOB error are shown below. The percentage gain is calculated as the reduction in error compared to the default model.
 
 ```{r}
+#| label: hypergrid_results
+#| tbl-cap: "Top 10 models with the lowest OOB error"
 # assessing the model parameters
-hypergrid_resid %>%
-  dplyr::arrange(error) %>%
-  dplyr::mutate(perc_gain = (resid_error - error) / resid_error * 100) %>%
+hypergrid_resid |>
+  dplyr::arrange(error) |>
+  dplyr::mutate(perc_gain = (resid_error - error) / resid_error * 100) |>
   head(10)
 ```
 
-Based on the 
-<!-- 
+Based on the results of the grid search, the following parameters were chosen for the final model:
+- `mtry = 12`
+- `min.node.size = 5`
+- `replace = FALSE`
+- `sample.fraction = 0.8`
+
+There were two models with the same OOB error, but I chose the one with `mtry = 12` instead of `mtry = 32`. The rationale for this if we went with `mtry = 32`, then each tree would be considering all the features at each split. This would also make the model equivalent to a *bagging* model. By choosing `mtry = 12`, we allow for more diversity among the trees, which can lead to better overall performance. This is further supported when we tune for the number of trees to use for the final model, which shows that the model with `mtry = 12` performs better than the model with `mtry = 32`.
+
+### Tuning the number of trees
+
+The number of trees was tuned separately from the other parameters. A hypergrid was created with the number of trees ranging from 50 to 2000 in increments of 50. The `mtry` parameter was set to the same values as before. A model was trained for each combination of parameters and the OOB error was recorded. The model with the lowest OOB error was chosen.
+
+```{r}
+#| label: hypergrid_trees
+#| code-fold: true
+
 # create a hypergrid for number of trees
 hypergrid_resid_trees <- expand.grid(
   num.trees = seq(50, 2000, 50),
@@ -455,26 +471,52 @@ for (i in seq_len(nrow(hypergrid_resid_trees))) {
   # export OOB RMSE
   hypergrid_resid_trees$accuracy[i] <- fit_resid_trees$prediction.error
 }
+```
 
-# determine what the best number of trees
-hypergrid_resid_trees %>%
-  dplyr::arrange(accuracy) %>%
-  mutate(perc_gain = (resid_error - accuracy) / resid_error * 100) %>%
+In the table below, the top 10 models with the lowest OOB error are shown. The percentage gain is calculated as the reduction in error compared to the default model. This shows that the model with `num.trees = 650` and `mtry = 12` has the lowest OOB error.
+
+```{r}
+#| label: hypergrid_trees_results
+#| tab-cap: "OOB error for different number of trees and mtry values"
+
+# assessing the model parameters
+hypergrid_resid_trees |>
+  dplyr::arrange(accuracy) |>
+  dplyr::mutate(perc_gain = (resid_error - accuracy) / resid_error * 100) |>
   head(10)
+```
+
+This is further visualized in the plot below. The model with `num.trees = 650` and `mtry = 12` has the lowest OOB error.
+
+```{r}
+#| label: hypergrid_trees_plot
+#| fig-cap: "OOB error for different number of trees and mtry values"
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: center
+#| out-width: "70%"
 
 # plotting the results
-hypergrid_resid_trees %>%
-  ggplot(aes(x = num.trees, y = accuracy, color = factor(mtry))) +
-  geom_line(linewidth = 1) +
+hypergrid_resid_trees |>
+  ggplot2::ggplot(aes(x = num.trees, y = accuracy, color = factor(mtry))) +
+  ggplot2::geom_line(linewidth = 1) +
   # geom_line(aes(linetype = factor(mtry)), linewidth = 1) +
-  labs(
+  ggplot2::labs(
     title = "Prediction error for Random Forest Hyperparameter Tuning",
     x = "number of trees",
     y = "% incorrect",
     color = "mtry"
   ) +
-  scale_color_manual(values = colorblind) +
-  theme_bw()
+  ggplot2::scale_color_manual(values = colorblind) +
+  ggplot2::theme_bw()
+```
+
+### Final model and variable importance
+
+The final model was trained using the optimal hyperparameters identified during the tuning process. The variable importance was assessed using both impurity and permutation-based methods.
+
+```{r}
+#| label: final_model
 
 # final random forest model with impurity
 resid_final_impurity <- ranger::ranger(
@@ -507,12 +549,23 @@ resid_final_permutation <- ranger::ranger(
   importance = "permutation",
   probability = TRUE
 )
+```
+
+The variable importance scores were extracted from both models and visualized using lollipop charts. 
+```{r}
+#| label: variable_importance
+#| fig-cap: "Variable importance scores for the final Random Forest model using impurity and permutation methods"
+#| fig-width: 10
+#| fig-height: 5    
+#| fig-align: center
+#| out-width: "90%"
 
 # Extract variable importance scores for impurity-based importance
 resid_impurity_scores <- vip::vi(resid_final_impurity)
 
 # Extract variable importance scores for permutation-based importance
 resid_permutation_scores <- vip::vi(resid_final_permutation)
+
 
 # Create a Lollipop chart of variable importance scores
 resid_impurity_plot <- resid_impurity_scores |>
@@ -529,7 +582,6 @@ resid_impurity_plot <- resid_impurity_scores |>
     y = "Importance (Impurity)"
   ) +
   theme_bw()
-resid_impurity_plot
 
 resid_permutation_plot <- resid_permutation_scores |>
   ggplot2::ggplot(
@@ -544,14 +596,13 @@ resid_permutation_plot <- resid_permutation_scores |>
     y = "Importance (Permutation)"
   ) +
   theme_bw()
-resid_permutation_plot
 
 resid_variable_importance_plot <- cowplot::plot_grid(
   resid_impurity_plot,
   resid_permutation_plot,
   nrow = 1
 )
-resid_variable_importance_plot -->
-
+resid_variable_importance_plot
+```
 
 
