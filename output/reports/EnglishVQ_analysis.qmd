@@ -7,12 +7,15 @@ format:
     code-tools: true
     self-contained: true
     embed-resources: true
+    code-fold: true
+    code-summary: "Show the code"
 execute: 
   code-fold: true
   warning: false
   message: false
 author: Mykel Brinkerhoff
 date: 2025-08-27 (W)
+updated: 2025-09-22 (M)
 ---
 
 ```{r}
@@ -233,9 +236,9 @@ vq_resid$Phonation <- factor(vq_resid$Phonation)
 
 The voice quality and classification data comes from `VoicesVQ_data` and `b-c_voice_cluster_labels`. 
 
-`VoicesVQ_data` contains the output of VoiceSauce. 
+The dataset `VoicesVQ_data` contains acoustic measures extracted from the audio files used in the perception experiment. These measures were extracted using VoiceSauce
 
-`b-c_voice_cluster_labels` contains the classification labels that participants assigned to each speaker. 
+The dataset `b-c_voice_cluster_labels` contains the classification labels that participants assigned to each speaker.
 
 These data were combined so each line of `VoicesVQ_data` contained the classification label based on subject id. This was stored as a new dataframe called `vq_raw`. This dataframe was cleaned of outliers following Brinekrhoff & McGuire 2025. 
 
@@ -247,45 +250,45 @@ This resulted in a dataframe with the following columns:
 
   - `Gender`: factor indicating the talkers' gender
   - `Talker`: factor indicating the speakers' id
-  - `Vowel`: factor indicating which vowel
-  - `Word`: Character
-  - `Filename`: character
-  - `Label`: character
-  - `Phonation`: character
-  - `seg_Start`:   numeric
-  - `seg_End`:   numeric
-  - `H2c_mean_z`:   numeric
-  - `H4c_mean_z`:   numeric
-  - `A1c_mean_z`:   numeric
-  - `A2c_mean_z`:   numeric
-  - `A3c_mean_z`:   numeric
-  - `H2Kc_mean_z`:   numeric
-  - `H1H2c_mean_z`:   numeric
-  - `H2H4c_mean_z`:   numeric
-  - `H1A1c_mean_z`:   numeric
-  - `H1A2c_mean_z`:   numeric
-  - `H1A3c_mean_z`:   numeric
-  - `H42Kc_mean_z`:   numeric
-  - `H2KH5Kc_mean_z`:   numeric
-  - `CPP_mean_z`:   numeric
-  - `HNR05_mean_z`:   numeric
-  - `HNR15_mean_z`:   numeric
-  - `HNR25_mean_z`:   numeric
-  - `HNR35_mean_z`:   numeric
-  - `SHR_mean_z`:   numeric
-  - `strF0_mean_z`:   numeric
-  - `sF1_mean_z`:   numeric
-  - `sF2_mean_z`:   numeric
-  - `sF3_mean_z`:   numeric
-  - `sF4_mean_z`:   numeric
-  - `sB1_mean_z`:   numeric
-  - `sB2_mean_z`:   numeric
-  - `sB3_mean_z`:   numeric
-  - `sB4_mean_z`:   numeric
-  - `epoch_mean_z`:   numeric
-  - `log_energy_z`:   numeric
-  - `soe_norm`:   numeric
-  - `resid_H1c`:   numeric
+  - `Vowel`: factor indicating which vowel was spoken
+  - `Word`: character indicating which word was spoken
+  - `Filename`: character indicating the filename of the audio file
+  - `Label`: character indicating the classification label
+  - `Phonation`: character indicating the phonation type
+  - `seg_Start`: numeric indicating the start time of the segment
+  - `seg_End`: numeric indicating the end time of the segment
+  - `H2c_mean_z`: numeric indicating the z-scored H2c mean
+  - `H4c_mean_z`: numeric indicating the z-scored H4c mean
+  - `A1c_mean_z`: numeric indicating the z-scored A1c mean
+  - `A2c_mean_z`: numeric indicating the z-scored A2c mean
+  - `A3c_mean_z`: numeric indicating the z-scored A3c mean
+  - `H2Kc_mean_z`: numeric indicating the z-scored H2Kc mean
+  - `H1H2c_mean_z`: numeric indicating the z-scored H1H2c mean
+  - `H2H4c_mean_z`: numeric indicating the z-scored H2H4c mean
+  - `H1A1c_mean_z`: numeric indicating the z-scored H1A1c mean
+  - `H1A2c_mean_z`: numeric indicating the z-scored H1A2c mean
+  - `H1A3c_mean_z`: numeric indicating the z-scored H1A3c mean
+  - `H42Kc_mean_z`: numeric indicating the z-scored H42Kc mean
+  - `H2KH5Kc_mean_z`: numeric indicating the z-scored H2KH5Kc mean
+  - `CPP_mean_z`: numeric indicating the z-scored CPP mean
+  - `HNR05_mean_z`: numeric indicating the z-scored HNR05 mean
+  - `HNR15_mean_z`: numeric indicating the z-scored HNR15 mean
+  - `HNR25_mean_z`: numeric indicating the z-scored HNR25 mean
+  - `HNR35_mean_z`: numeric indicating the z-scored HNR35 mean
+  - `SHR_mean_z`: numeric indicating the z-scored SHR mean
+  - `strF0_mean_z`: numeric indicating the z-scored strF0 mean
+  - `sF1_mean_z`: numeric indicating the z-scored sF1 mean
+  - `sF2_mean_z`: numeric indicating the z-scored sF2 mean
+  - `sF3_mean_z`: numeric indicating the z-scored sF3 mean
+  - `sF4_mean_z`: numeric indicating the z-scored sF4 mean
+  - `sB1_mean_z`: numeric indicating the z-scored sB1 mean
+  - `sB2_mean_z`: numeric indicating the z-scored sB2 mean
+  - `sB3_mean_z`: numeric indicating the z-scored sB3 mean
+  - `sB4_mean_z`: numeric indicating the z-scored sB4 mean
+  - `epoch_mean_z`: numeric indicating the z-scored epoch mean
+  - `log_energy_z`: numeric indicating the z-scored log energy mean
+  - `soe_norm`: numeric indicating the normalized SoE
+  - `resid_H1c`: numeric indicating the residual H1c
 
 ## Analysis
 ### Preparing for analysis
@@ -296,6 +299,17 @@ I removed the columns `Gender`, `Talker`, `Vowel`, `Word`, `Filename`, `Label`,`
 ```{r}
 #| label: splitting
 #| code-fold: true
+
+# remove all columns except Phonation and the standardized data
+    vq_resid <- vq_resid |>
+      dplyr::select(
+        Phonation,
+        dplyr::ends_with("_z"),
+        soe_norm,
+        resid_H1c
+      ) |>
+      dplyr::rename_with(~ stringr::str_remove_all(., "_mean_z$|_z$|_norm$")) |>
+      dplyr::select(-dplyr::matches("u$"))
 
 # stratified sampling with the rsample package with respect to phonation
 set.seed(123) # needed for reproducibility
@@ -329,7 +343,32 @@ table(resid_test$Phonation) |>
 
 ### Tuning the model
 
-Random Forest models need to have the correct parameter settings for the analysis to work. These parameters were chosen based on a grid search. 
+Random Forest models need to have the correct parameter settings for the analysis to work. These parameters were chosen based on a grid search and the model with the lowest out-of-bag (OOB) error was chosen. 
+
+First a default model was trained to determine a baseline prediction error. Then a hypergrid of parameters was created and a model was trained for each combination of parameters. The OOB error for each model was recorded and the model with the lowest OOB error was chosen. 
+
+The parameters that were tuned were:
+- `mtry`: number of variables to possibly split at in each node equal to
+  - 5% of the total number of features
+  - 15% of the total number of features
+  - 20% of the total number of features
+  - 25% of the total number of features
+  - 33.3% of the total number of features (default)
+  - 40% of the total number of features
+  - 100% of the total number of features
+- `min.node.size`: minimal node size equal to
+  - 1
+  - 3
+  - 5
+  - 10
+- `replace`: whether to sample with replacement 
+  - TRUE
+  - FALSE
+- `sample.fraction`: fraction of the data to sample at each split equal to:
+  - 50%
+  - 63%
+  - 80%
+- `num.trees`: number of trees to grow (not tuned here, but tuned in a subsequent step).
 
 ```{r}
 #| label: hypergrid_search
@@ -377,7 +416,11 @@ for (i in seq_len(nrow(hypergrid_resid))) {
   # export OOB RMSE
   hypergrid_resid$error[i] <- fit_resid$prediction.error
 }
+```
 
+This results in a hypergrid with the OOB error for each combination of parameters. The top 10 models with the lowest OOB error are shown below. The percentage gain is calculated as the reduction in error compared to the default model.
+
+```{r}
 # assessing the model parameters
 hypergrid_resid %>%
   dplyr::arrange(error) %>%
@@ -385,6 +428,7 @@ hypergrid_resid %>%
   head(10)
 ```
 
+Based on the 
 <!-- 
 # create a hypergrid for number of trees
 hypergrid_resid_trees <- expand.grid(
